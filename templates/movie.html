@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ movie.title }} - Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">{{ movie.title }}</h1>
+        <a href="/" class="btn btn-secondary mb-4">Back to Home</a>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Movie Details</h5>
+                <p class="card-text">
+                    <strong>Released:</strong> {{ movie.released }}<br>
+                    {% if movie.tagline %}
+                    <strong>Tagline:</strong> "{{ movie.tagline }}"
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="mb-3">Directors</h2>
+                {% if movie.directors %}
+                <div class="list-group">
+                    {% for director in movie.directors %}
+                    <div class="list-group-item">
+                        <h5 class="mb-1">{{ director.name }}</h5>
+                        <small class="text-muted">Born: {{ director.born }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No directors listed</p>
+                {% endif %}
+            </div>
+
+            <div class="col-md-6">
+                <h2 class="mb-3">Actors</h2>
+                {% if movie.actors %}
+                <div class="list-group">
+                    {% for actor in movie.actors %}
+                    <a href="/actor/{{ actor.name }}" class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">{{ actor.name }}</h5>
+                        <small class="text-muted">Born: {{ actor.born }}</small>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p>No actors listed</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
