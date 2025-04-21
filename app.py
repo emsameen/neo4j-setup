@@ -14,42 +14,42 @@ password = os.getenv("NEO4J_PASSWORD", "password")
 
 driver = GraphDatabase.driver(uri, auth=(user, password))
 
-def search_movies(tx, query, skip=0, limit=10):
+def search_movies(tx, search_term, skip=0, limit=10):
     result = tx.run("""
         MATCH (m:Movie)
-        WHERE toLower(m.title) CONTAINS toLower($query)
+        WHERE toLower(m.title) CONTAINS toLower($search_term)
         RETURN m.title as title, m.released as released, m.tagline as tagline
         ORDER BY m.released DESC
         SKIP $skip
         LIMIT $limit
-    """, query=query, skip=skip, limit=limit)
+    """, search_term=search_term, skip=skip, limit=limit)
     return [dict(record) for record in result]
 
-def search_movies_count(tx, query):
+def search_movies_count(tx, search_term):
     result = tx.run("""
         MATCH (m:Movie)
-        WHERE toLower(m.title) CONTAINS toLower($query)
+        WHERE toLower(m.title) CONTAINS toLower($search_term)
         RETURN count(m) as count
-    """, query=query)
+    """, search_term=search_term)
     return result.single()["count"]
 
-def search_actors(tx, query, skip=0, limit=10):
+def search_actors(tx, search_term, skip=0, limit=10):
     result = tx.run("""
         MATCH (a:Person)-[:ACTED_IN]->(:Movie)
-        WHERE toLower(a.name) CONTAINS toLower($query)
+        WHERE toLower(a.name) CONTAINS toLower($search_term)
         RETURN DISTINCT a.name as name, a.born as born
         ORDER BY a.name
         SKIP $skip
         LIMIT $limit
-    """, query=query, skip=skip, limit=limit)
+    """, search_term=search_term, skip=skip, limit=limit)
     return [dict(record) for record in result]
 
-def search_actors_count(tx, query):
+def search_actors_count(tx, search_term):
     result = tx.run("""
         MATCH (a:Person)-[:ACTED_IN]->(:Movie)
-        WHERE toLower(a.name) CONTAINS toLower($query)
+        WHERE toLower(a.name) CONTAINS toLower($search_term)
         RETURN count(DISTINCT a) as count
-    """, query=query)
+    """, search_term=search_term)
     return result.single()["count"]
 
 def get_movies(tx, skip=0, limit=10):
