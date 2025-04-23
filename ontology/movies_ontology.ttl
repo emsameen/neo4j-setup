@@ -1,0 +1,80 @@
+@prefix mov: <http://example.org/movies#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#########################################
+###         TBox - Ontology           ###
+#########################################
+
+mov:MoviesOntology a owl:Ontology .
+
+### Classes ###
+mov:Movie a owl:Class ;
+    rdfs:label "Movie" .
+
+mov:Person a owl:Class ;
+    rdfs:label "Person" .
+
+### Object Properties ###
+mov:actedIn a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Movie ;
+    rdfs:label "acted in" .
+
+mov:directed a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Movie ;
+    rdfs:label "directed" .
+
+mov:produced a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Movie ;
+    rdfs:label "produced" .
+
+mov:wrote a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Movie ;
+    rdfs:label "wrote" .
+
+mov:reviewed a owl:ObjectProperty ;
+    rdfs:domain mov:Movie ;
+    rdfs:range mov:Person ;
+    rdfs:label "reviewed by" .
+
+mov:follows a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Person ;
+    rdfs:label "follows" .
+    
+### Datatype Properties ###
+mov:title a owl:DatatypeProperty ;
+    rdfs:domain mov:Movie ;
+    rdfs:range xsd:string ;
+    rdfs:label "title" .
+
+mov:released a owl:DatatypeProperty ;
+    rdfs:domain mov:Movie ;
+    rdfs:range xsd:gYear ;
+    rdfs:label "release year" .
+
+mov:tagline a owl:DatatypeProperty ;
+    rdfs:domain mov:Movie ;
+    rdfs:range xsd:string ;
+    rdfs:label "tagline" .
+
+mov:name a owl:DatatypeProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "name" .
+
+mov:born a owl:DatatypeProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range xsd:gYear ;
+    rdfs:label "birth year" .
+
+mov:roles a owl:DatatypeProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "roles" .
