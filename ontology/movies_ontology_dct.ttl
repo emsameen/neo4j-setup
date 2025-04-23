@@ -1,0 +1,128 @@
+@prefix mov: <http://example.org/movies#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+############################################
+###             TBox (Schema)            ###
+############################################
+
+mov:MoviesOntology a owl:Ontology .
+
+### Classes ###
+mov:Movie a owl:Class ;
+    rdfs:label "Movie" ;
+    rdfs:subClassOf schema:Movie .
+
+mov:Person a owl:Class ;
+    rdfs:label "Person" ;
+    rdfs:subClassOf foaf:Person .
+
+mov:Role a owl:Class ;
+    rdfs:label "Role" .
+
+### Object Properties ###
+mov:actedIn a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Movie ;
+    rdfs:label "acted in" .
+
+mov:directed a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Movie ;
+    rdfs:label "directed" .
+
+mov:produced a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Movie ;
+    rdfs:label "produced" .
+
+mov:wrote a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Movie ;
+    rdfs:label "wrote" .
+
+mov:follows a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Person ;
+    rdfs:label "follows" .
+
+mov:reviewed a owl:ObjectProperty ;
+    rdfs:domain mov:Movie ;
+    rdfs:range mov:Person ;
+    rdfs:label "reviewed by" .
+
+mov:playedRole a owl:ObjectProperty ;
+    rdfs:domain mov:Person ;
+    rdfs:range mov:Role ;
+    rdfs:label "played role" .
+
+mov:hasCharacter a owl:ObjectProperty ;
+    rdfs:domain mov:Role ;
+    rdfs:range xsd:string ;
+    rdfs:label "character name" .
+
+### Extended Datatype Properties ###
+mov:primaryTitle a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dct:title ;
+    rdfs:domain mov:Movie ;
+    rdfs:range xsd:string ;
+    rdfs:label "primary title" .
+
+mov:releaseYear a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dct:date ;
+    rdfs:domain mov:Movie ;
+    rdfs:range xsd:gYear ;
+    rdfs:label "release year" .
+
+mov:movieSummary a owl:DatatypeProperty ;
+    rdfs:subPropertyOf dct:description ;
+    rdfs:domain mov:Movie ;
+    rdfs:range xsd:string ;
+    rdfs:label "summary or tagline" .
+
+mov:fullName a owl:DatatypeProperty ;
+    rdfs:subPropertyOf foaf:name ;
+    rdfs:domain mov:Person ;
+    rdfs:range xsd:string ;
+    rdfs:label "full name" .
+
+mov:birthYear a owl:DatatypeProperty ;
+    rdfs:subPropertyOf schema:birthDate ;
+    rdfs:domain mov:Person ;
+    rdfs:range xsd:gYear ;
+    rdfs:label "birth year" .
+
+############################################
+###         ABox (Instance Data)         ###
+############################################
+
+### Movie Instance ###
+mov:the-matrix a mov:Movie ;
+    mov:primaryTitle "The Matrix" ;
+    mov:releaseYear "1999"^^xsd:gYear ;
+    mov:movieSummary "Welcome to the Real World" ;
+    schema:actor mov:keanu-reeves ;
+    schema:director mov:lana-wachowski .
+
+### Person Instances ###
+mov:keanu-reeves a mov:Person ;
+    mov:fullName "Keanu Reeves" ;
+    mov:birthYear "1964"^^xsd:gYear ;
+    mov:actedIn mov:the-matrix ;
+    mov:playedRole mov:role-neo .
+
+mov:lana-wachowski a mov:Person ;
+    mov:fullName "Lana Wachowski" ;
+    mov:birthYear "1965"^^xsd:gYear ;
+    mov:directed mov:the-matrix .
+
+### Role Instance ###
+mov:role-neo a mov:Role ;
+    mov:hasCharacter "Neo" ;
+    schema:actor mov:keanu-reeves ;
+    schema:inMovie mov:the-matrix .
