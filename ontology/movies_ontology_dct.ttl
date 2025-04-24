@@ -1,128 +1,177 @@
-@prefix mov: <http://example.org/movies#> .
 @prefix dct: <http://purl.org/dc/terms/> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix schema: <http://schema.org/> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix mov: <http://example.org/mov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-############################################
-###             TBox (Schema)            ###
-############################################
+################################################################
+############################# T-Box ############################
+################################################################
 
-mov:MoviesOntology a owl:Ontology .
+####################################
+# Ontology Metadata
+####################################
 
-### Classes ###
+<http://example.org/mov>
+    a owl:Ontology ;
+    rdfs:comment "An ontology for describing movies, people involved, and reviews using Dublin Core metadata elements." .
+
+####################################
+# Classes
+####################################
+
 mov:Movie a owl:Class ;
     rdfs:label "Movie" ;
-    rdfs:subClassOf schema:Movie .
+    rdfs:comment "A creative work in the form of a film or motion picture." ;
+    rdfs:subClassOf dct:BibliographicResource .
 
-mov:Person a owl:Class ;
-    rdfs:label "Person" ;
-    rdfs:subClassOf foaf:Person .
+# We reuse dct:Agent for people/organizations
 
-mov:Role a owl:Class ;
-    rdfs:label "Role" .
+####################################
+# Properties
+####################################
 
-### Object Properties ###
-mov:actedIn a owl:ObjectProperty ;
-    rdfs:domain mov:Person ;
-    rdfs:range mov:Movie ;
-    rdfs:label "acted in" .
+# Reuse Dublin Core metadata terms
 
-mov:directed a owl:ObjectProperty ;
-    rdfs:domain mov:Person ;
-    rdfs:range mov:Movie ;
-    rdfs:label "directed" .
+dct:title rdfs:comment "The official title of the movie." .
+dct:description rdfs:comment "A short description or tagline of the movie." .
+dct:date rdfs:comment "The release year or date of the movie." .
+dct:creator rdfs:comment "The primary agent responsible for creating the movie, typically the director or writer." .
+dct:contributor rdfs:comment "An agent who made a secondary contribution to the movie, such as an actor or producer." .
 
-mov:produced a owl:ObjectProperty ;
-    rdfs:domain mov:Person ;
-    rdfs:range mov:Movie ;
-    rdfs:label "produced" .
+# Custom properties
 
-mov:wrote a owl:ObjectProperty ;
-    rdfs:domain mov:Person ;
-    rdfs:range mov:Movie ;
-    rdfs:label "wrote" .
-
-mov:follows a owl:ObjectProperty ;
-    rdfs:domain mov:Person ;
-    rdfs:range mov:Person ;
-    rdfs:label "follows" .
-
-mov:reviewed a owl:ObjectProperty ;
+mov:reviewedBy a owl:ObjectProperty ;
     rdfs:domain mov:Movie ;
-    rdfs:range mov:Person ;
-    rdfs:label "reviewed by" .
+    rdfs:range dct:Agent ;
+    rdfs:label "reviewed by" ;
+    rdfs:comment "Links a movie to an agent who has reviewed it." .
 
-mov:playedRole a owl:ObjectProperty ;
-    rdfs:domain mov:Person ;
-    rdfs:range mov:Role ;
-    rdfs:label "played role" .
-
-mov:hasCharacter a owl:ObjectProperty ;
-    rdfs:domain mov:Role ;
+mov:role a owl:DatatypeProperty ;
+    rdfs:domain dct:Agent ;
     rdfs:range xsd:string ;
-    rdfs:label "character name" .
+    rdfs:label "role" ;
+    rdfs:comment "Describes the specific role played by an agent in relation to a movie, such as 'actor', 'director', 'producer', or 'reviewer'." .
 
-### Extended Datatype Properties ###
-mov:primaryTitle a owl:DatatypeProperty ;
-    rdfs:subPropertyOf dct:title ;
+mov:reviewSummary a owl:DatatypeProperty ;
     rdfs:domain mov:Movie ;
     rdfs:range xsd:string ;
-    rdfs:label "primary title" .
+    rdfs:label "review summary" ;
+    rdfs:comment "A short summary written by the reviewer about the movie." .
 
-mov:releaseYear a owl:DatatypeProperty ;
-    rdfs:subPropertyOf dct:date ;
+mov:reviewRating a owl:DatatypeProperty ;
     rdfs:domain mov:Movie ;
-    rdfs:range xsd:gYear ;
-    rdfs:label "release year" .
+    rdfs:range xsd:integer ;
+    rdfs:label "review rating" ;
+    rdfs:comment "A numeric rating of the movie given by the reviewer." .
 
-mov:movieSummary a owl:DatatypeProperty ;
-    rdfs:subPropertyOf dct:description ;
-    rdfs:domain mov:Movie ;
-    rdfs:range xsd:string ;
-    rdfs:label "summary or tagline" .
+mov:follows a owl:ObjectProperty , owl:IrreflexiveProperty ;
+    rdfs:domain dct:Agent ;
+    rdfs:range dct:Agent ;
+    rdfs:label "follows" ;
+    rdfs:comment "Indicates that one agent follows another (social graph). An agent cannot follow themselves." .
 
-mov:fullName a owl:DatatypeProperty ;
-    rdfs:subPropertyOf foaf:name ;
-    rdfs:domain mov:Person ;
-    rdfs:range xsd:string ;
-    rdfs:label "full name" .
 
-mov:birthYear a owl:DatatypeProperty ;
-    rdfs:subPropertyOf schema:birthDate ;
-    rdfs:domain mov:Person ;
-    rdfs:range xsd:gYear ;
-    rdfs:label "birth year" .
+################################################################
+############################# A-Box ############################
+################################################################
 
-############################################
-###         ABox (Instance Data)         ###
-############################################
+#############################
+### Agent: Tom Hanks
+#############################
 
-### Movie Instance ###
-mov:the-matrix a mov:Movie ;
-    mov:primaryTitle "The Matrix" ;
-    mov:releaseYear "1999"^^xsd:gYear ;
-    mov:movieSummary "Welcome to the Real World" ;
-    schema:actor mov:keanu-reeves ;
-    schema:director mov:lana-wachowski .
+mov:tom-hanks a dct:Agent ;
+    dct:title "Tom Hanks" ;
+    mov:role "Actor, Director, Reviewer" .
 
-### Person Instances ###
-mov:keanu-reeves a mov:Person ;
-    mov:fullName "Keanu Reeves" ;
-    mov:birthYear "1964"^^xsd:gYear ;
-    mov:actedIn mov:the-matrix ;
-    mov:playedRole mov:role-neo .
+#############################
+### Movies as Actor
+#############################
 
-mov:lana-wachowski a mov:Person ;
-    mov:fullName "Lana Wachowski" ;
-    mov:birthYear "1965"^^xsd:gYear ;
-    mov:directed mov:the-matrix .
+# Cast Away
+mov:cast-away a mov:Movie ;
+    dct:title "Cast Away" ;
+    dct:date "2000"^^xsd:gYear ;
+    dct:description "At the edge of the world, his journey begins." ;
+    dct:contributor mov:tom-hanks .
 
-### Role Instance ###
-mov:role-neo a mov:Role ;
-    mov:hasCharacter "Neo" ;
-    schema:actor mov:keanu-reeves ;
-    schema:inMovie mov:the-matrix .
+# That Thing You Do
+mov:that-thing-you-do a mov:Movie ;
+    dct:title "That Thing You Do" ;
+    dct:date "1996"^^xsd:gYear ;
+    dct:description "In every life there comes a time when that thing you dream becomes that thing you do." ;
+    dct:contributor mov:tom-hanks ;
+    dct:creator mov:tom-hanks .  # Director
+
+# Cloud Atlas
+mov:cloud-atlas a mov:Movie ;
+    dct:title "Cloud Atlas" ;
+    dct:date "2012"^^xsd:gYear ;
+    dct:description "Everything is connected." ;
+    dct:contributor mov:tom-hanks .
+
+# The Polar Express
+mov:the-polar-express a mov:Movie ;
+    dct:title "The Polar Express" ;
+    dct:date "2004"^^xsd:gYear ;
+    dct:description "This Holiday Season... Believe" ;
+    dct:contributor mov:tom-hanks .
+
+# A League of Their Own
+mov:a-league-of-their-own a mov:Movie ;
+    dct:title "A League of Their Own" ;
+    dct:date "1992"^^xsd:gYear ;
+    dct:description "Once in a lifetime you get a chance to do something different." ;
+    dct:contributor mov:tom-hanks .
+
+# Charlie Wilson's War
+mov:charlie-wilsons-war a mov:Movie ;
+    dct:title "Charlie Wilson's War" ;
+    dct:date "2007"^^xsd:gYear ;
+    dct:description "A stiff drink. A little mascara. A lot of nerve." ;
+    dct:contributor mov:tom-hanks .
+
+# Sleepless in Seattle
+mov:sleepless-in-seattle a mov:Movie ;
+    dct:title "Sleepless in Seattle" ;
+    dct:date "1993"^^xsd:gYear ;
+    dct:description "What if someone you never met... was the only someone for you?" ;
+    dct:contributor mov:tom-hanks .
+
+# You've Got Mail
+mov:youve-got-mail a mov:Movie ;
+    dct:title "You've Got Mail" ;
+    dct:date "1998"^^xsd:gYear ;
+    dct:description "At odds in life... in love on-line." ;
+    dct:contributor mov:tom-hanks .
+
+# Joe Versus the Volcano
+mov:joe-versus-the-volcano a mov:Movie ;
+    dct:title "Joe Versus the Volcano" ;
+    dct:date "1990"^^xsd:gYear ;
+    dct:description "A story of love, lava and burning desire." ;
+    dct:contributor mov:tom-hanks .
+
+# The Da Vinci Code
+mov:the-da-vinci-code a mov:Movie ;
+    dct:title "The Da Vinci Code" ;
+    dct:date "2006"^^xsd:gYear ;
+    dct:description "Break The Codes" ;
+    dct:contributor mov:tom-hanks .
+
+# Apollo 13
+mov:apollo-13 a mov:Movie ;
+    dct:title "Apollo 13" ;
+    dct:date "1995"^^xsd:gYear ;
+    dct:description "Houston, we have a problem." ;
+    dct:contributor mov:tom-hanks .
+
+#############################
+### As Reviewer (example)
+#############################
+
+mov:jerry-maguire a mov:Movie ;
+    dct:title "Jerry Maguire" ;
+    dct:date "2000"^^xsd:gYear ;
+    dct:description "The rest of his life begins now." ;
+    mov:reviewedBy mov:tom-hanks .
